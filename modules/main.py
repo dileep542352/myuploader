@@ -312,6 +312,20 @@ async def txt_handler(bot: Client, m: Message):
                video_id = url.split("/embed/")[1].split("?")[0]
                print(video_id)
                url = f"https://www.youtube.com/embed/{video_id}"
+
+            if '/do' in url:               
+               parts = url.split('/')               
+               part1 = parts[1]
+               part2 = parts[2]
+               part3 = parts[3] 
+               part4 = parts[4]
+               part5 = parts[5]
+               
+               print(f"PART1: {part1}")
+               print(f"PART2: {part2}")
+               print(f"PART3: {part3}")
+               print(f"PART4: {part4}")               
+               url = f"https://kgs-v4.akamaized.net/{part2}/{part3}/{part4}"
                 
             if 'khansirvod4.pc.cdn.bitgravity.com' in url:               
                parts = url.split('/')               
@@ -326,7 +340,7 @@ async def txt_handler(bot: Client, m: Message):
                print(f"PART3: {part3}")
                print(f"PART4: {part4}")
                print(f"PART5: {part5}")
-               url = f"https://kgs-v4.akamaized.net/kgs-cv/{part3}/{part4}/{part5}"
+               url = f"https://kgs-v4.akamaized.net/{part2}/{part3}/{part4}/{part5}"
             if '/onlineagriculture' in url:
                 # Splitting the URL
                parts = url.split("/")
