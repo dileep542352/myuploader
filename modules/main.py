@@ -328,7 +328,8 @@ async def txt_handler(bot: Client, m: Message):
                print(f"PART4: {part4}")
                print(f"PART5: {part5}")
                url = f"https://kgs-v4.akamaized.net/kgs/{part3}/{part4}/{part5}"
-                
+               print(f"URL: {url}")
+               
             if 'khansirvod4.pc.cdn.bitgravity.com' in url:               
                parts = url.split('/')               
                part1 = parts[1]
