@@ -67,6 +67,7 @@ async def main():
     # Start the bot
     await start_bot()
 
+    
     # Keep the program running
     try:
         while True:
@@ -316,7 +317,7 @@ async def txt_handler(bot: Client, m: Message):
             if '/do' in url:               
                pdf_id = url.split("/")[-1].split(".pdf")[0]
                print(pdf_id)
-               url = f"https://kgs-v4.akamaized.net/kgs/do/pdfs/{pdf_id}"
+               url = f"https://kgs-v4.akamaized.net/kgs/do/pdfs/{pdf_id}n"
                
                
             if 'bitgravity.com' in url:               
