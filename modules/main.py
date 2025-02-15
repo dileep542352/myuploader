@@ -320,7 +320,7 @@ async def txt_handler(bot: Client, m: Message):
                part3 = parts[3] 
                part4 = parts[4]
                part5 = parts[5]
-               part5 = parts[5]
+               part6 = parts[6]
                 
                print(f"PART1: {part1}")
                print(f"PART2: {part2}")
