@@ -317,7 +317,7 @@ async def txt_handler(bot: Client, m: Message):
             if '/do' in url:               
                pdf_id = url.split("/")[-1].split(".pdf")[0]
                print(pdf_id)
-               url = f"https://kgs-v4.akamaized.net/kgs/do/pdfs/{pdf_id}n"
+               url = f"https://kgs-v4.akamaized.net/kgs/do/pdfs/{pdf_id}.pdf"
                
                
             if 'bitgravity.com' in url:               
@@ -327,13 +327,15 @@ async def txt_handler(bot: Client, m: Message):
                part3 = parts[3] 
                part4 = parts[4]
                part5 = parts[5]
+               part6 = parts[6]
                
                print(f"PART1: {part1}")
                print(f"PART2: {part2}")
                print(f"PART3: {part3}")
                print(f"PART4: {part4}")
                print(f"PART5: {part5}")
-               url = f"https://kgs-v4.akamaized.net/{part2}/{part3}/{part4}/{part5}"
+               print(f"PART6: {part6}")
+               url = f"https://kgs-v4.akamaized.net/{part3}/{part4}/{part5}/{part6}"
                
                 
             if '/onlineagriculture' in url:
