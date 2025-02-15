@@ -314,7 +314,7 @@ async def txt_handler(bot: Client, m: Message):
                url = f"https://www.youtube.com/embed/{video_id}"
 
             if '/do' in url:               
-               url.split("/")[-1].split(".pdf")[0]
+               pdf_id = url.split("/")[-1].split(".pdf")[0]
                print(pdf_id)
                url = f"https://kgs-v4.akamaized.net/kgs/do/pdfs/{pdf_id}.pdf"
                
