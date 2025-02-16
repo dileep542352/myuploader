@@ -305,6 +305,25 @@ async def txt_handler(bot: Client, m: Message):
                part4 = parts[4]
                part5 = parts[5]
                part6 = parts[6]
+               
+                
+               print(f"PART1: {part1}")
+               print(f"PART2: {part2}")
+               print(f"PART3: {part3}")
+               print(f"PART4: {part4}")
+               print(f"PART5: {part5}")
+               print(f"PART6: {part6}")
+               
+               url = f"https://kgs-v1.akamaized.net/{part3}/{part4}/{part5}/{part6}"
+               
+            if '/kv4-state-pcs' in url or "/kgs3" in url:               
+               parts = url.split('/')               
+               part1 = parts[1]
+               part2 = parts[2]
+               part3 = parts[3] 
+               part4 = parts[4]
+               part5 = parts[5]
+               part6 = parts[6]
                part7 = parts[7]
                part8 = parts[8]
                 
@@ -316,8 +335,8 @@ async def txt_handler(bot: Client, m: Message):
                print(f"PART6: {part6}")
                print(f"PART7: {part7}")
                print(f"PART8: {part8}")
-               url = f"https://kgs-v1.akamaized.net/{part3}/{part4}/{part5}/{part6}/{part7}/{part8}"
                
+               url = f"https://kgs-v1.akamaized.net/{part3}/{part4}/{part5}/{part6}/{part7}/{part8}"
                 
             if '/onlineagriculture' in url:
                 # Splitting the URL
