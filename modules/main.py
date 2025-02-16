@@ -294,7 +294,7 @@ async def txt_handler(bot: Client, m: Message):
             if '/do' in url:               
                pdf_id = url.split("/")[-1].split(".pdf")[0]
                print(pdf_id)
-               url = f"https://kgs-v1.akamaized.net/kgs/do/pdfs/{pdf_id}.pdf"
+               url = f"https://kgs-v2.akamaized.net/kgs/do/pdfs/{pdf_id}.pdf"
                
                
             if 'bitgravity.com' in url:               
@@ -456,7 +456,7 @@ async def txt_handler(bot: Client, m: Message):
 
            
                 else:
-                    Show = f"❊⟱ 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 ⟱❊ »\n\n📄 Title:- `{name}\n\n𝐓𝐚𝐭𝐚𝐥 𝐔𝐑𝐋 🔗 {len(links)}\n\n⌨ 𝐐𝐮𝐥𝐢𝐭𝐲 » {raw_text2}`\n\n**🔗 𝐔𝐑𝐋 »** `{url}`\n\n**𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦ ᴀɴᴋɪᴛ sʜᴀᴋʏᴀ"
+                    Show = f"📥 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠  »\n\n📄 Title:- `{name}\n\n𝐓𝐚𝐭𝐚𝐥 𝐔𝐑𝐋 🔗 {len(links)}\n\n⌨ 𝐐𝐮𝐥𝐢𝐭𝐲 » {raw_text2}`\n\n**🔗 𝐔𝐑𝐋 »** `{url}`\n\n**𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦ ᴀɴᴋɪᴛ sʜᴀᴋʏᴀ"
                     prog = await m.reply_text(Show)
                     res_file = await helper.download_video(url, cmd, name)
                     filename = res_file
@@ -474,6 +474,7 @@ async def txt_handler(bot: Client, m: Message):
     except Exception as e:
         await m.reply_text(e)
     await m.reply_text("🔰Done🔰")
+    await m.reply_text("🥰Thanks For Choosing")
 
 @bot.on_message(filters.command(["visionpdf"]) )
 async def vision_pdf(bot: Client, m: Message):
