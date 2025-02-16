@@ -269,19 +269,12 @@ async def txt_handler(bot: Client, m: Message):
             elif 'videos.classplusapp' in url or "tencdn.classplusapp" in url or "webvideos.classplusapp.com" in url or "media-cdn-alisg.classplusapp.com" in url or "videos.classplusapp" in url or "videos.classplusapp.com" in url or "media-cdn-a.classplusapp" in url or "media-cdn.classplusapp" in url or "alisg-cdn-a.classplusapp" in url:
              url = requests.get(f'https://api.classplusapp.com/cams/uploader/video/jw-signed-url?url={url}', headers={'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9r'}).json()['url']
 
-            elif "apps-s3-jw-prod.utkarshapp.com" in url:
-                  headers = {  
-                          "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36",  
-                          "Accept-Language": "en-US,en;q=0.9",  
-                  }
-                  response = requests.get(url, headers=headers)  
-                  print(response.text)
-            
             
             
             elif '/master.mpd' in url:
-             vid_id =  url.split("hls")[-1]
-             url =  f"https://pw-links-api.onrender.com/process?v=https://sec1.pw.live/{vid_id}/master.mpd&quality={raw_text2}"
+             vid_id =  url.split("/")[-2]
+             url =  f"https://madxapi-d0cbf6ac738c.herokuapp.com/{vid_id}/master.m3u8?token={raw_text4}"
+
 
             name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
             name = f'{str(count).zfill(3)}) {name1[:60]}'
@@ -291,53 +284,7 @@ async def txt_handler(bot: Client, m: Message):
                print(video_id)
                url = f"https://www.youtube.com/embed/{video_id}"
 
-            if '/do' in url:               
-               pdf_id = url.split("/")[-1].split(".pdf")[0]
-               print(pdf_id)
-               url = f"https://kgs-v2.akamaized.net/kgs/do/pdfs/{pdf_id}.pdf"
-               
-               
-            if 'bitgravity.com' in url:               
-               parts = url.split('/')               
-               part1 = parts[1]
-               part2 = parts[2]
-               part3 = parts[3] 
-               part4 = parts[4]
-               part5 = parts[5]
-               part6 = parts[6]
-               
-                
-               print(f"PART1: {part1}")
-               print(f"PART2: {part2}")
-               print(f"PART3: {part3}")
-               print(f"PART4: {part4}")
-               print(f"PART5: {part5}")
-               print(f"PART6: {part6}")
-               
-               url = f"https://kgs-v1.akamaized.net/{part3}/{part4}/{part5}/{part6}"
-               
-            if '/kv4-state-pcs' in url or "/kgs3" in url:               
-               parts = url.split('/')               
-               part1 = parts[1]
-               part2 = parts[2]
-               part3 = parts[3] 
-               part4 = parts[4]
-               part5 = parts[5]
-               part6 = parts[6]
-               part7 = parts[7]
-               part8 = parts[8]
-                
-               print(f"PART1: {part1}")
-               print(f"PART2: {part2}")
-               print(f"PART3: {part3}")
-               print(f"PART4: {part4}")
-               print(f"PART5: {part5}")
-               print(f"PART6: {part6}")
-               print(f"PART7: {part7}")
-               print(f"PART8: {part8}")
-               
-               url = f"https://kgs-v1.akamaized.net/{part3}/{part4}/{part5}/{part6}/{part7}/{part8}"
-                
+
             if '/onlineagriculture' in url:
                 # Splitting the URL
                parts = url.split("/")
