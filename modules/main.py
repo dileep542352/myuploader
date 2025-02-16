@@ -328,14 +328,18 @@ async def txt_handler(bot: Client, m: Message):
                part4 = parts[4]
                part5 = parts[5]
                part6 = parts[6]
-               
+               part7 = parts[7]
+               part8 = parts[8]
+                
                print(f"PART1: {part1}")
                print(f"PART2: {part2}")
                print(f"PART3: {part3}")
                print(f"PART4: {part4}")
                print(f"PART5: {part5}")
                print(f"PART6: {part6}")
-               url = f"https://kgs-v2.akamaized.net/{part3}/{part4}/{part5}/{part6}.m3n8"
+               print(f"PART7: {part7}")
+               print(f"PART8: {part8}")
+               url = f"https://kgs-v2.akamaized.net/{part3}/{part4}/{part5}/{part6}/{part7}/{part8}"
                
                 
             if '/onlineagriculture' in url:
