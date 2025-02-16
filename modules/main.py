@@ -266,31 +266,8 @@ async def txt_handler(bot: Client, m: Message):
                 
 
             
-            elif 'videos.classplusapp' in url:
-             headers = {
-                    'host': 'api.classplusapp.com',
-                    'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9',    
-                    'accept-language': 'EN',
-                    'api-version': '18',
-                    'app-version': '1.4.73.2',
-                    'build-number': '35',
-                    'connection': 'Keep-Alive',
-                    'content-type': 'application/json',
-                    'device-details': 'Xiaomi_Redmi 7_SDK-32',
-                    'device-id': 'c28d3cb16bbdac01',
-                    'region': 'IN',
-                    'user-agent': 'Mobile-Android',
-                    'webengage-luid': '00000187-6fe4-5d41-a530-26186858be4c',
-                    'accept-encoding': 'gzip'
-             }
-             params = (('url', f'{url}'),)
-             response = requests.get("https://api.classplusapp.com/cams/uploader/video/jw-signed-url", headers=headers, params=params)
-             url = response.json()['url']
-             
-
-
-              
-
+            elif 'videos.classplusapp' in url or "tencdn.classplusapp" in url or "webvideos.classplusapp.com" in url or "media-cdn-alisg.classplusapp.com" in url or "videos.classplusapp" in url or "videos.classplusapp.com" in url or "media-cdn-a.classplusapp" in url or "media-cdn.classplusapp" in url or "alisg-cdn-a.classplusapp" in url:
+             url = requests.get(f'https://api.classplusapp.com/cams/uploader/video/jw-signed-url?url={url}', headers={'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9r'}).json()['url']
 
             elif "apps-s3-jw-prod.utkarshapp.com" in url:
                   headers = {  
@@ -317,7 +294,7 @@ async def txt_handler(bot: Client, m: Message):
             if '/do' in url:               
                pdf_id = url.split("/")[-1].split(".pdf")[0]
                print(pdf_id)
-               url = f"https://kgs-v2.akamaized.net/kgs/do/pdfs/{pdf_id}.pdf"
+               url = f"https://kgs-v1.akamaized.net/kgs/do/pdfs/{pdf_id}.pdf"
                
                
             if 'bitgravity.com' in url:               
@@ -339,7 +316,7 @@ async def txt_handler(bot: Client, m: Message):
                print(f"PART6: {part6}")
                print(f"PART7: {part7}")
                print(f"PART8: {part8}")
-               url = f"https://kgs-v2.akamaized.net/{part3}/{part4}/{part5}/{part6}/{part7}/{part8}"
+               url = f"https://kgs-v1.akamaized.net/{part3}/{part4}/{part5}/{part6}/{part7}/{part8}"
                
                 
             if '/onlineagriculture' in url:
@@ -414,8 +391,8 @@ async def txt_handler(bot: Client, m: Message):
 
             try:  
                 
-                cc = f'**<pre><code>🎞️ VID_ID: {str(count).zfill(3)}.</code></pre>\n\n<blockquote>📄 Title: {name1} {res} @Ankit_Shakya73.mkv<blockquote>\n\n<pre><code>🔖 Batch Name:</code></pre> {b_name}</code></pre>\n\n<pre><code>📥 Extracted By :</code></pre> {CR}**\n\n<pre><code>━━━━━✦𝐀𝐍𝐊𝐈𝐓❤️✦━━━━━</code></pre>'
-                cc1 = f'**<pre><code>📁 PDF_ID: {str(count).zfill(3)}.</code></pre>\n\n<blockquote>📄 Title: {name1} @Ankit_Shakya73.pdf<blockquote>\n\n<pre><code>🔖 Batch Name:</code></pre><blockquote>{b_name}<blockquote>\n\n<pre><code>📥 Extracted By :</code></pre>{CR}**\n\n<pre><code>━━━━━✦𝐀𝐍𝐊𝐈𝐓❤️✦━━━━━</code></pre>'
+                cc = f'**<pre><code>🎞️ 𝐕𝐈𝐃_𝐈𝐃: {str(count).zfill(3)}.</code></pre>\n\n<pre><code>📝 𝐓𝐈𝐓𝐋𝐄:👇🏻</code></pre>\n<pre><code>{name1} {res} .mkv</code></pre>\n\n<pre><code>📚 𝐁𝐀𝐓𝐂𝐇 𝐍𝐀𝐌𝐄:👇🏻</code>\n</pre><pre><code>{b_name}</code></pre>\n\n<pre><code>✨𝐄𝐗𝐓𝐑𝐀𝐂𝐓𝐄𝐃 𝐁𝐘 : {CR}</code></pre>**\n\n<pre><code>━━━━━✦𝐀𝐍𝐊𝐈𝐓❤️✦━━━━━</code></pre>'
+                cc1 = f'**<pre><code>📁 𝐏𝐃𝐅_𝐈𝐃: {str(count).zfill(3)}.</code></pre>\n\n<pre><code>📝 𝐓𝐈𝐓𝐋𝐄:👇🏻</code></pre>\n<pre><code>{name1} .pdf</code></pre>\n\n<pre><code>📚 𝐁𝐀𝐓𝐂𝐇 𝐍𝐀𝐌𝐄:👇🏻</code>\n</pre><pre><code>{b_name}</code></pre>\n\n<pre><code>✨𝐄𝐗𝐓𝐑𝐀𝐂𝐓𝐄𝐃 𝐁𝐘 : {CR}</code></pre>**\n\n<pre><code>━━━━━✦𝐀𝐍𝐊𝐈𝐓❤️✦━━━━━</code></pre>'
                     
                 
                 if "drive" in url:
