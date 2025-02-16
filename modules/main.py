@@ -335,7 +335,7 @@ async def txt_handler(bot: Client, m: Message):
                print(f"PART4: {part4}")
                print(f"PART5: {part5}")
                print(f"PART6: {part6}")
-               url = f"https://kgs-v2.akamaized.net/{part3}/{part4}/{part5}/{part6}"
+               url = f"https://kgs-v2.akamaized.net/{part3}/{part4}/{part5}/{part6}.m3n8"
                
                 
             if '/onlineagriculture' in url:
