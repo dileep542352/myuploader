@@ -12,7 +12,7 @@ python-dotenv==1.0.0
 requests==2.31.0
 soupsieve==2.4.1
 TgCrypto
-urllib3==2.0.3
+urllib3==2.3.0
 websockets==11.0.3
 yt-dlp==2025.01.26
 motor
