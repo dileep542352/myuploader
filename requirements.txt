@@ -8,7 +8,7 @@ pycryptodome==3.18.0
 pyrogram
 pyromod==1.4
 PySocks==1.7.1
-python-dotenv==1.0.0
+python-dotenv==1.1.0
 requests==2.31.0
 soupsieve==2.4.1
 TgCrypto
