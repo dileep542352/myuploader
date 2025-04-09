@@ -28,9 +28,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 # Configuration (Replace with your actual credentials)
-API_ID = "23298276"  # Replace with your Telegram API ID
-API_HASH = "0fa5ea46f81eb24548cfc66b5d0f6107"  # Replace with your Telegram API Hash
-BOT_TOKEN = "8098279575:AAGAMKgRgSW4b0TvbE6njoYtpntTCiONw3E"  # Replace with your Bot Token
+API_ID = "29211134"  # Replace with your Telegram API ID
+API_HASH = "bd48e9f3e02e98c3dc44b9ddf10d71ff"  # Replace with your Telegram API Hash
+BOT_TOKEN = "7691099356:AAEyetNAwplPsUQk6nUy-gd1-QNb_ZdUIoI"  # Replace with your Bot Token
 WEBHOOK = False  # Set to True if using a web server
 PORT = 8000  # Port for web server if WEBHOOK is True
 
