@@ -27,19 +27,25 @@ from pyromod import listen
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Configuration (Replace with your actual credentials)
-API_ID = "29211134"  # Replace with your Telegram API ID
-API_HASH = "bd48e9f3e02e98c3dc44b9ddf10d71ff"  # Replace with your Telegram API Hash
-BOT_TOKEN = "7691099356:AAEyetNAwplPsUQk6nUy-gd1-QNb_ZdUIoI"  # Replace with your Bot Token
-WEBHOOK = False  # Set to True if using a web server
-PORT = 8000  # Port for web server if WEBHOOK is True
+# Configuration from environment variables
+API_ID = os.getenv("API_ID")
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+WEBHOOK = os.getenv("WEBHOOK", "False").lower() == "true"  # Default to False
+PORT = int(os.getenv("PORT", 8000))  # Default to 8000 if not set
+
+# Validate environment variables
+if not all([API_ID, API_HASH, BOT_TOKEN]):
+    logger.error("Missing required environment variables: API_ID, API_HASH, or BOT_TOKEN")
+    sys.exit(1)
 
 # Initialize client
 bot = Client(
     "bot", 
     api_id=API_ID, 
     api_hash=API_HASH, 
-    bot_token=BOT_TOKEN
+    bot_token=BOT_TOKEN,
+    workers=4  # Adjust based on platform resources
 )
 thread_pool = ThreadPoolExecutor()
 ongoing_downloads = {}
@@ -50,12 +56,12 @@ def handle_exception(loop, context):
     logger.error(f"Caught exception: {msg}")
     logger.error(f"Context: {context}")
 
-# Web server setup
+# Web server setup (for webhook)
 routes = web.RouteTableDef()
 
 @routes.get("/", allow_head=True)
 async def root_route_handler(request):
-    return web.json_response("Bot is running")
+    return web.json_response({"status": "Bot is running"})
 
 async def web_server():
     web_app = web.Application(client_max_size=30000000)
@@ -89,13 +95,9 @@ async def main():
             logger.info(f"Web server started on port {PORT}")
         
         await start_bot()
-        logger.info("Main loop starting...")
+        logger.info("Bot is running...")
+        await asyncio.Future()  # Keep the bot running indefinitely
         
-        # Keep the bot running
-        while True:
-            await asyncio.sleep(3600)
-            logger.info("Bot still running...")
-            
     except (KeyboardInterrupt, SystemExit):
         logger.info("Received shutdown signal")
         await stop_bot()
@@ -232,13 +234,20 @@ async def progress_callback(current, total, message):
 # Command Handlers
 @bot.on_message(filters.command("start"))
 async def start(client: Client, msg: Message):
-    logger.info(f"Start command received from {msg.from_user.first_name}")
-    await msg.reply_text(
-        "🌟 Welcome to the Ultimate Downloader Bot! 🌟\n\n"
-        "Supports YouTube, Instagram, MPD, PDFs, and more!\n"
-        "Use /txtdl for batch downloads from TXT files.\n"
-        "Bot Made by 𝐀𝐍𝐊𝐈𝐓 𝐒𝐇𝐀𝐊𝐘𝐀™👨🏻‍💻"
-    )
+    logger.info(f"Start command received from {msg.from_user.first_name} (ID: {msg.from_user.id})")
+    try:
+        await msg.reply_text(
+            "🌟 Welcome to the Ultimate Downloader Bot! 🌟\n\n"
+            "Supports YouTube, Instagram, MPD, PDFs, and more!\n"
+            "Use /txtdl for batch downloads from TXT files.\n"
+            "Bot Made by 𝐀𝐍𝐊𝐈𝐓 𝐒𝐇𝐀𝐊𝐘𝐀™👨🏻‍💻"
+        )
+    except FloodWait as e:
+        logger.warning(f"FloodWait: Sleeping for {e.x} seconds")
+        await asyncio.sleep(e.x)
+        await msg.reply_text("Bot was rate-limited. Try again now!")
+    except Exception as e:
+        logger.error(f"Error in start handler: {e}")
 
 @bot.on_message(filters.command("stop"))
 async def stop_handler(_, m):
@@ -543,3 +552,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except Exception as e:
         logger.critical(f"Critical error in main execution: {e}")
+        sys.exit(1)
