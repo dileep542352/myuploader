@@ -27,7 +27,7 @@ API_ID = "23298276"  # Replace with your Telegram API ID
 API_HASH = "0fa5ea46f81eb24548cfc66b5d0f6107"  # Replace with your Telegram API Hash
 BOT_TOKEN = "8098279575:AAGAMKgRgSW4b0TvbE6njoYtpntTCiONw3E"  # Replace with your Bot Token
 WEBHOOK = False  # Set to True if using a web server
-PORT = 8080  # Port for web server if WEBHOOK is True
+PORT = 8000  # Port for web server if WEBHOOK is True
 
 # Initialize client
 bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
