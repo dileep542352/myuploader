@@ -11,4 +11,4 @@ WORKDIR /app/
 RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
 ENV COOKIES_FILE_PATH="/youtube_cookies.txt"
 #CMD ["python3", "modules/main.py"]
-CMD gunicorn app:app & python3 modules/main.py
+CMD gunicorn app:app & python3 main.py
