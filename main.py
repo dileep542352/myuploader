@@ -23,11 +23,18 @@ from pyrogram.errors import FloodWait
 from aiohttp import web
 from pyromod import listen
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# Set up logging with more detailed information
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler("bot.log")
+    ]
+)
 logger = logging.getLogger(__name__)
 
-# Configuration from environment variables
+# Configuration from environment variables with better validation
 API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -35,8 +42,17 @@ WEBHOOK = os.getenv("WEBHOOK", "False").lower() == "true"  # Default to False
 PORT = int(os.getenv("PORT", 8000))  # Default to 8000 if not set
 
 # Validate environment variables
-if not all([API_ID, API_HASH, BOT_TOKEN]):
-    logger.error("Missing required environment variables: API_ID, API_HASH, or BOT_TOKEN")
+missing_vars = []
+if not API_ID:
+    missing_vars.append("API_ID")
+if not API_HASH:
+    missing_vars.append("API_HASH")
+if not BOT_TOKEN:
+    missing_vars.append("BOT_TOKEN")
+
+if missing_vars:
+    logger.critical(f"Missing required environment variables: {', '.join(missing_vars)}")
+    logger.critical("Please set them before starting the bot")
     sys.exit(1)
 
 # Initialize client
@@ -50,11 +66,30 @@ bot = Client(
 thread_pool = ThreadPoolExecutor()
 ongoing_downloads = {}
 
+# Verify bot token before starting
+def verify_bot_token(token):
+    try:
+        response = requests.get(f"https://api.telegram.org/bot{token}/getMe", timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if data["ok"]:
+                logger.info(f"Bot token is valid! Bot name: {data['result']['first_name']}")
+                return True
+        logger.error(f"Bot token verification failed: {response.text}")
+        return False
+    except Exception as e:
+        logger.error(f"Error verifying bot token: {e}")
+        return False
+
 # Custom exception handler for asyncio
 def handle_exception(loop, context):
     msg = context.get("exception", context["message"])
     logger.error(f"Caught exception: {msg}")
     logger.error(f"Context: {context}")
+    # Print full traceback if exception is available
+    if "exception" in context:
+        import traceback
+        logger.error(traceback.format_exc())
 
 # Web server setup (for webhook)
 routes = web.RouteTableDef()
@@ -68,42 +103,47 @@ async def web_server():
     web_app.add_routes(routes)
     return web_app
 
+async def test_connection():
+    """Test Telegram connection with minimal functionality"""
+    test_bot = Client(
+        "test_bot", 
+        api_id=API_ID, 
+        api_hash=API_HASH, 
+        bot_token=BOT_TOKEN
+    )
+    
+    try:
+        logger.info("Testing connection to Telegram...")
+        await test_bot.start()
+        me = await test_bot.get_me()
+        logger.info(f"Connection successful! Bot: @{me.username}")
+        await test_bot.stop()
+        return True
+    except Exception as e:
+        logger.error(f"Connection test failed: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return False
+
 async def start_bot():
     try:
+        logger.info("Attempting to connect to Telegram...")
         await bot.start()
         me = await bot.get_me()
         logger.info(f"Bot started successfully! Username: @{me.username}")
     except Exception as e:
-        logger.error(f"Failed to start bot: {e}")
+        logger.critical(f"Failed to start bot: {e}")
+        # Print stacktrace for more details
+        import traceback
+        logger.critical(traceback.format_exc())
         raise
 
 async def stop_bot():
-    await bot.stop()
-    logger.info("Bot stopped")
-
-async def main():
-    # Set up asyncio exception handler
-    loop = asyncio.get_event_loop()
-    loop.set_exception_handler(handle_exception)
-    
     try:
-        if WEBHOOK:
-            app_runner = web.AppRunner(await web_server())
-            await app_runner.setup()
-            site = web.TCPSite(app_runner, "0.0.0.0", PORT)
-            await site.start()
-            logger.info(f"Web server started on port {PORT}")
-        
-        await start_bot()
-        logger.info("Bot is running...")
-        await asyncio.Future()  # Keep the bot running indefinitely
-        
-    except (KeyboardInterrupt, SystemExit):
-        logger.info("Received shutdown signal")
-        await stop_bot()
+        await bot.stop()
+        logger.info("Bot stopped")
     except Exception as e:
-        logger.error(f"Critical error in main loop: {e}")
-        await stop_bot()
+        logger.error(f"Error stopping bot: {e}")
 
 # Utility Functions
 def get_random_string(length=7):
@@ -131,6 +171,18 @@ async def extract_audio_async(ydl_opts, url):
             logger.error(f"Error extracting audio: {e}")
             return None
     return await asyncio.get_event_loop().run_in_executor(thread_pool, sync_extract)
+
+async def download_with_ydl(url, ydl_opts):
+    def _download():
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                return ydl.download([url])
+        except Exception as e:
+            logger.error(f"Error in yt-dlp download: {e}")
+            raise
+    
+    # Run in thread pool to avoid blocking
+    return await asyncio.get_event_loop().run_in_executor(thread_pool, _download)
 
 async def process_audio(event, url, cookies_env_var=None):
     cookies = os.getenv(cookies_env_var) if cookies_env_var else None
@@ -192,6 +244,7 @@ async def process_audio(event, url, cookies_env_var=None):
             await event.reply("**__Audio file not found after extraction!__**")
     except Exception as e:
         logger.error(f"Error in process_audio: {e}")
+        logger.error(traceback.format_exc())
         await event.reply(f"**__An error occurred: {str(e)}__**")
     finally:
         if os.path.exists(download_path):
@@ -248,6 +301,8 @@ async def start(client: Client, msg: Message):
         await msg.reply_text("Bot was rate-limited. Try again now!")
     except Exception as e:
         logger.error(f"Error in start handler: {e}")
+        logger.error(traceback.format_exc())
+        await msg.reply_text(f"An error occurred: {str(e)}")
 
 @bot.on_message(filters.command("stop"))
 async def stop_handler(_, m):
@@ -477,12 +532,8 @@ async def txt_handler(bot: Client, m: Message):
 
                 prog = await m.reply_text(f"📥 Downloading: `{name}`\n\n🔗 URL: `{url}`")
                 try:
-                    def download_with_ydl():
-                        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                            ydl.download([url])
-                    
-                    # Run yt-dlp in a thread to avoid blocking
-                    await asyncio.get_event_loop().run_in_executor(thread_pool, download_with_ydl)
+                    # Using the improved async download function
+                    await download_with_ydl(url, ydl_opts)
                     
                     if os.path.exists(download_path):
                         upload_prog = await m.reply_text("**__Starting Upload...__**")
@@ -532,6 +583,7 @@ async def txt_handler(bot: Client, m: Message):
                 
         except Exception as e:
             logger.error(f"Batch error: {e}")
+            logger.error(traceback.format_exc())
             await m.reply_text(f"Batch Error: {str(e)}")
         finally:
             ongoing_downloads.pop(user_id, None)
@@ -542,14 +594,60 @@ async def txt_handler(bot: Client, m: Message):
         
     except Exception as e:
         logger.error(f"Error in txtdl handler: {e}")
+        logger.error(traceback.format_exc())
         await m.reply_text(f"An error occurred: {str(e)}")
         ongoing_downloads.pop(user_id, None)
 
+async def main():
+    # Set up asyncio exception handler
+    loop = asyncio.get_event_loop()
+    loop.set_exception_handler(handle_exception)
+    
+    try:
+        # Check if bot token is valid
+        if not verify_bot_token(BOT_TOKEN):
+            logger.critical("Bot token verification failed! Please check your token.")
+            return
+            
+        # Test connection first
+        logger.info("Testing connection to Telegram...")
+        connection_ok = await test_connection()
+        if not connection_ok:
+            logger.critical("Connection test failed, check credentials and network")
+            return
+            
+        # Start bot with simplified flow (for debugging)
+        if WEBHOOK:
+            logger.info(f"Setting up webhook on port {PORT}...")
+            app_runner = web.AppRunner(await web_server())
+            await app_runner.setup()
+            site = web.TCPSite(app_runner, "0.0.0.0", PORT)
+            await site.start()
+            logger.info(f"Web server started on port {PORT}")
+            
+        logger.info("Starting bot...")
+        await start_bot()
+        logger.info("Bot is running...")
+        await asyncio.Future()  # Keep the bot running indefinitely
+        
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Received shutdown signal")
+        await stop_bot()
+    except Exception as e:
+        logger.critical(f"Critical error in main loop: {e}")
+        import traceback
+        logger.critical(traceback.format_exc())
+        await stop_bot()
+
 # Main Execution
 if __name__ == "__main__":
+    # Make sure imports are valid
+    import traceback
+    
     logger.info("Bot script starting...")
     try:
         asyncio.run(main())
     except Exception as e:
         logger.critical(f"Critical error in main execution: {e}")
+        logger.critical(traceback.format_exc())
         sys.exit(1)
